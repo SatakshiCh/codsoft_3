@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .calculator {
+            display: grid;
+            grid-template-rows: 1fr 2fr;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 320px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+        }
+        .display {
+            grid-column: span 4;
+            background-color: #333;
+            color: #fff;
+            font-size: 2em;
+            text-align: right;
+            padding: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .button {
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #d0d0d0;
+        }
+        .button.operator {
+            background-color: #ff9500;
+            color: white;
+        }
+        .button.operator:hover {
+            background-color: #e68900;
+        }
+        .button.double {
+            grid-column: span 2;
+        }
+        .button.triple {
+            grid-column: span 3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <button class="button double" id="clear">C</button>
+        <button class="button operator" id="divide">/</button>
+        <button class="button operator" id="multiply">*</button>
+        <button class="button operator" id="subtract">-</button>
+        <button class="button" id="seven">7</button>
+        <button class="button" id="eight">8</button>
+        <button class="button" id="nine">9</button>
+        <button class="button operator" id="add">+</button>
+        <button class="button" id="four">4</button>
+        <button class="button" id="five">5</button>
+        <button class="button" id="six">6</button>
+        <button class="button" id="one">1</button>
+        <button class="button" id="two">2</button>
+        <button class="button" id="three">3</button>
+        <button class="button triple operator" id="equals">=</button>
+        <button class="button double" id="zero">0</button>
+        <button class="button" id="decimal">.</button>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        let currentInput = '';
+        let operator = '';
+        let firstOperand = '';
+        let secondOperand = '';
+
+        function updateDisplay(value) {
+            display.textContent = value;
+        }
+
+        function handleNumber(number) {
+            currentInput += number;
+            updateDisplay(currentInput);
+        }
+
+        function handleOperator(op) {
+            if (currentInput !== '') {
+                firstOperand = currentInput;
+                currentInput = '';
+                operator = op;
+            }
+        }
+
+        function calculate() {
+            if (firstOperand !== '' && currentInput !== '') {
+                secondOperand = currentInput;
+                let result;
+                switch (operator) {
+                    case '+':
+                        result = parseFloat(firstOperand) + parseFloat(secondOperand);
+                        break;
+                    case '-':
+                        result = parseFloat(firstOperand) - parseFloat(secondOperand);
+                        break;
+                    case '*':
+                        result = parseFloat(firstOperand) * parseFloat(secondOperand);
+                        break;
+                    case '/':
+                        result = parseFloat(firstOperand) / parseFloat(secondOperand);
+                        break;
+                    default:
+                        return;
+                }
+                updateDisplay(result);
+                currentInput = result.toString();
+                firstOperand = '';
+                operator = '';
+            }
+        }
+
+        document.getElementById('clear').addEventListener('click', () => {
+            currentInput = '';
+            firstOperand = '';
+            operator = '';
+            updateDisplay('0');
+        });
+
+        document.getElementById('divide').addEventListener('click', () => handleOperator('/'));
+        document.getElementById('multiply').addEventListener('click', () => handleOperator('*'));
+        document.getElementById('subtract').addEventListener('click', () => handleOperator('-'));
+        document.getElementById('add').addEventListener('click', () => handleOperator('+'));
+        document.getElementById('equals').addEventListener('click', calculate);
+
+        Array.from(document.querySelectorAll('.button:not(.operator):not(#clear):not(#equals)')).forEach(button => {
+            button.addEventListener('click', (e) => handleNumber(e.target.textContent));
+        });
+
+        document.getElementById('decimal').addEventListener('click', () => {
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+                updateDisplay(currentInput);
+            }
+        });
+    </script>
+
+</body>
+</html>
